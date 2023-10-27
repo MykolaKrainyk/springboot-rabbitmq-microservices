@@ -22,11 +22,21 @@ public class RabbitMQConfig {
     private String exchange;
     @Value("${rabbitmq.routing.key.name}")
     private String orderRoutingKey;
+    @Value("${rabbitmq.queue.email.name}")
+    private String emailQueueName;
+    @Value("${rabbitmq.routing.key.email.name}")
+    private String emailRoutingKey;
 
     // spring bean for queue - order queue
     @Bean
     public Queue orderQueue() {
         return new Queue(orderQueueName);
+    }
+
+    // spring bean for queue - email queue
+    @Bean
+    public Queue emailQueue() {
+        return new Queue(emailQueueName);
     }
 
     // spring bean for exchange
@@ -41,6 +51,13 @@ public class RabbitMQConfig {
         return BindingBuilder.bind(orderQueue())
                 .to(exchange())
                 .with(orderRoutingKey);
+    }
+
+    @Bean
+    public Binding emailBinding() {
+        return BindingBuilder.bind(emailQueue())
+                .to(exchange())
+                .with(emailRoutingKey);
     }
 
     // message converter
